@@ -1,21 +1,18 @@
 #include <cnoid/SimpleController>
 
-class MyController : public cnoid::SimpleController
-{
-    public:
-    virtual bool initialize(cnoid::SimpleControllerIO* io) override
-    {
-        cnoid::BodyPtr ioBody = io->body();
-        cnoid::Link* joint = ioBody->joint(1);
+class MyController : public cnoid::SimpleController {
+public:
+  virtual bool initialize(cnoid::SimpleControllerIO *io) override {
+    cnoid::BodyPtr ioBody = io->body();
+    cnoid::Link *joint = ioBody->joint(1);
 
-        joint->setActuationMode(cnoid::Link::JointVelocity);
-        io->enableIO(joint);
+    joint->setActuationMode(cnoid::Link::JointVelocity);
+    io->enableIO(joint);
 
-        joint->dq_target() = 200;
+    joint->dq_target() = 200;
 
-        return true;
-    }
-
+    return true;
+  }
 };
 
 CNOID_IMPLEMENT_SIMPLE_CONTROLLER_FACTORY(MyController)
