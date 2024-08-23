@@ -4,8 +4,6 @@ pos_csv = 'output.csv'
 
 set datafile separator ','
 
-set xrange [20:25]
-
 set term pdfcairo font 'Times, 8' size 7.5 cm, 5.0 cm
 set output 'output.pdf'
 
