@@ -57,7 +57,12 @@ for i in range(num_frames):
         seq['components'][0]['frames'][i][0][4],
         seq['components'][0]['frames'][i][0][5],
         seq['components'][0]['frames'][i][0][6])
-    eul = quaternion.as_euler_angles(quat)
+    sy = 2 * quat.w * quat.y - 2 * quat.x * quat.z
+    unlocked = sy < 0.999999
+    eul = [
+        np.arctan2(2 * quat.y * quat.z + 2 * quat.w * quat.x, 2 * quat.w * quat.w + 2 * quat.z * quat.z - 1.) if unlocked else 0,
+        np.arcsin(2 * quat.w * quat.y - 2 * quat.x * quat.z),
+        np.arctan2(2 * quat.x * quat.y + 2 * quat.w * quat.z, 2 * quat.w * quat.w + 2 *  quat.x * quat.x - 1.) if unlocked else np.arctan2(-2 * quat.x * quat.y + 2 * quat.z * quat.w, 2 * quat.w * quat.w + 2 * quat.y * quat.y - 1.)]
 
     row = [time, *seq['components'][0]['frames'][i][0], *eul, *seq['components'][1]['frames'][i]]
 
