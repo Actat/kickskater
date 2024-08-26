@@ -7,8 +7,10 @@ import numpy as np
 import quaternion
 
 seq_file = 'AISTSimulator-KickSkater.seq'
-csv_file = 'output.csv'
+csv_basename = 'output'
 title_row = True
+
+csv_pos = csv_basename + '_pos.csv'
 
 print('Load file: ' + seq_file)
 try:
@@ -38,14 +40,14 @@ except Exception as e:
     sys.exit()
 print('Format OK.')
 
-title = ['time', 'x', 'y', 'z', 'qw', 'qx', 'qy', 'qz', 'roll', 'pitch', 'yaw']
+title_pos = ['time', 'x', 'y', 'z', 'qw', 'qx', 'qy', 'qz', 'roll', 'pitch', 'yaw']
 for i in range(seq['components'][1]['num_parts']):
-    title.append(str(i))
-print('csv column: ' + str(title))
+    title_pos.append(str(i))
+print('csv_pos column: ' + str(title_pos))
 
-result = []
+result_pos = []
 if title_row:
-    result.append(title)
+    result_pos.append(title_pos)
 
 frame_rate = seq['frame_rate']
 num_frames = seq['num_frames']
@@ -66,16 +68,16 @@ for i in range(num_frames):
 
     row = [time, *seq['components'][0]['frames'][i][0], *eul, *seq['components'][1]['frames'][i]]
 
-    result.append(row)
+    result_pos.append(row)
 
-print('CSV file: ' + csv_file)
+print('csv_pos file: ' + csv_pos)
 try:
-    with open(csv_file, 'w') as f:
+    with open(csv_pos, 'w') as f:
         writer = csv.writer(f)
-        writer.writerows(result)
+        writer.writerows(result_pos)
 except Exception as e:
     print(e)
-    print('Failed to open file (' + csv_file + ').')
+    print('Failed to open file (' + csv_pos + ').')
     print('Exit.')
     sys.exit()
 print('The csv file is written.')
