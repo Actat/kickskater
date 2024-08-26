@@ -11,6 +11,7 @@ csv_basename = 'output'
 title_row = True
 
 csv_pos = csv_basename + '_pos.csv'
+csv_vel = csv_basename + '_vel.csv'
 
 print('Load file: ' + seq_file)
 try:
@@ -41,17 +42,24 @@ except Exception as e:
 print('Format OK.')
 
 title_pos = ['time', 'x', 'y', 'z', 'qw', 'qx', 'qy', 'qz', 'roll', 'pitch', 'yaw']
+title_vel = ['time', 'dx', 'dy', 'dz', 'droll', 'dpitch', 'dyaw']
 for i in range(seq['components'][1]['num_parts']):
     title_pos.append(str(i))
+    title_vel.append('d' + str(i))
 print('csv_pos column: ' + str(title_pos))
+print('csv_vel column: ' + str(title_vel))
 
 result_pos = []
+result_vel = []
 if title_row:
     result_pos.append(title_pos)
+    result_vel.append(title_vel)
 
 frame_rate = seq['frame_rate']
 num_frames = seq['num_frames']
+pre = []
 for i in range(num_frames):
+    # pos
     time = 1. * i / frame_rate
 
     quat = np.quaternion(
@@ -70,11 +78,36 @@ for i in range(num_frames):
 
     result_pos.append(row)
 
+    # vel
+    dt = 1. / frame_rate
+    now = [seq['components'][0]['frames'][i][0][0],
+           seq['components'][0]['frames'][i][0][1],
+           seq['components'][0]['frames'][i][0][2],
+           *eul,
+           *seq['components'][1]['frames'][i]]
+    if(i >= 1):
+        time = (i - 0.5) / frame_rate
+        vel = [((n - p) / dt) for n, p in zip(now, pre)]
+        result_vel.append([time, *vel])
+    pre = now
+
 print('csv_pos file: ' + csv_pos)
 try:
     with open(csv_pos, 'w') as f:
         writer = csv.writer(f)
         writer.writerows(result_pos)
+except Exception as e:
+    print(e)
+    print('Failed to open file (' + csv_pos + ').')
+    print('Exit.')
+    sys.exit()
+print('The csv file is written.')
+
+print('csv_vel file: ' + csv_vel)
+try:
+    with open(csv_vel, 'w') as f:
+        writer = csv.writer(f)
+        writer.writerows(result_vel)
 except Exception as e:
     print(e)
     print('Failed to open file (' + csv_pos + ').')
