@@ -1,6 +1,7 @@
 #!/usr/bin/gnuplot
 
-pos_csv = 'output.csv'
+pos_csv = 'output_pos.csv'
+vel_csv = 'output_vel.csv'
 
 set datafile separator ','
 
@@ -31,19 +32,17 @@ do for [i = 1:n_row]{
 
         if (i == 1 && j == 1){
             plot \
-                pos_csv u 1:2 w p ps 0.1 pt 7 t 'x', \
-                pos_csv u 1:3 w p ps 0.1 pt 7 t 'y', \
-                pos_csv u 1:4 w p ps 0.1 pt 7 t 'z'
-        }
-        if (i == 2 && j == 1) {
-            plot \
                 pos_csv u 1: 9 w p ps 0.1 pt 7 t 'Roll', \
                 pos_csv u 1:10 w p ps 0.1 pt 7 t 'Pitch', \
                 pos_csv u 1:11 w p ps 0.1 pt 7 t 'Yaw'
         }
+        if (i == 2 && j == 1) {
+            plot \
+                pos_csv u 1:12 w p ps 0.1 pt 7 t 'Gimbal angle'
+        }
         if (i == 3 && j == 1) {
             plot \
-                pos_csv u 1:13 w p ps 0.1 pt 7 t 'Flywheel angle'
+                vel_csv u 1:9 w p ps 0.1 pt 7 t 'Flywheel speed'
         }
     }
 }
